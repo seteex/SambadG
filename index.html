@@ -24,7 +24,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow: hidden; /* Evita scroll en el body principal */
             position: relative;
         }
 
@@ -55,6 +55,7 @@
             background-color: rgba(5, 5, 5, 0.8);
         }
 
+        /* Esquinas */
         .corner { position: absolute; width: 15px; height: 15px; border: 2px solid var(--accent); z-index: 2; }
         .top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
         .top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
@@ -128,13 +129,15 @@
             border-left: 4px solid var(--accent);
             background: #0a0a0a;
             position: relative;
-            max-height: 80vh;
+            max-height: 80vh; /* Ajustado para el texto */
+            
             /* Scroll funcional pero invisible */
-            overflow-y: scroll;
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
+            overflow-y: scroll; /* Permitir scroll vertical */
+            scrollbar-width: none; /* Ocultar en Firefox */
+            -ms-overflow-style: none;  /* Ocultar en IE/Edge */
         }
 
+        /* Ocultar barra de scroll en Chrome, Safari y Opera */
         .modal-content::-webkit-scrollbar {
             display: none;
         }
