@@ -1,237 +1,277 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAMBAD GP :: Protocolo de Velocidad</title>
+    <title>UBGames.88</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #050505;
-            --main-text: #e0e0e0;
-            --accent: #ff3c3c;
-            --accent-dim: #550000;
-            --font-tech: 'Courier New', Courier, monospace;
-            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --text-color: #ffffff;
+            --card-bg: rgba(20, 20, 20, 0.8);
+            --sidebar-bg: rgba(10, 10, 10, 0.95);
+            --accent-ia: #00f2ff;
+            --transition-speed: 0.5s;
+            --danger: #ff4d4d;
         }
 
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
+        body.light-mode {
+            --bg-color: #e0e0e0;
+            --text-color: #1a1a1a;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --sidebar-bg: rgba(240, 240, 240, 0.95);
+            --accent-ia: #007bff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
             background-color: var(--bg-color);
-            color: var(--main-text);
-            font-family: var(--font-sans);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden; /* Evita scroll en el body principal */
-            position: relative;
-        }
-
-        /* Cuadrícula de fondo */
-        body::before {
-            content: "";
-            position: absolute;
-            width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(var(--accent-dim) 1px, transparent 1px),
-                linear-gradient(90deg, var(--accent-dim) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.1;
-            z-index: 0;
-        }
-
-        .main-frame {
-            position: relative;
-            z-index: 1;
-            width: 90vw;
-            height: 85vh;
-            max-width: 1200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            border: 1px solid #333;
-            background-color: rgba(5, 5, 5, 0.8);
-        }
-
-        /* Esquinas */
-        .corner { position: absolute; width: 15px; height: 15px; border: 2px solid var(--accent); z-index: 2; }
-        .top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-        .top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
-        .bottom-left { bottom: -2px; left: -2px; border-right: none; border-top: none; }
-        .bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            font-family: var(--font-tech);
-            font-size: 0.7rem;
-            color: #666;
-            text-transform: uppercase;
-        }
-
-        h1 {
-            font-size: clamp(3rem, 12vw, 8rem);
-            font-weight: 900;
-            letter-spacing: -0.08em;
-            margin: 0;
-            text-transform: uppercase;
-            background: linear-gradient(180deg, #fff 0%, #444 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-        }
-
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            border: 1px solid #333;
-            counter-reset: section;
-        }
-
-        .box {
-            border-right: 1px solid #333;
-            padding: 25px 15px;
-            text-decoration: none;
-            color: #fff;
-            font-family: var(--font-tech);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            position: relative;
-            transition: 0.3s;
-            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color);
             overflow: hidden;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
         }
 
-        .box:last-child { border-right: none; }
-        .box::before { content: "0" counter(section); counter-increment: section; display: block; font-size: 1.2rem; color: #222; margin-bottom: 5px; }
-        .box:hover { color: #000; }
-        .box::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 0; background: var(--accent); z-index: -1; transition: 0.3s; }
-        .box:hover::after { height: 100%; }
+        /* BOTONES SALIR */
+        .exit-btn {
+            position: fixed; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 77, 77, 0.1); border: 1.5px solid var(--danger);
+            color: var(--danger); font-family: 'Nunito', sans-serif; font-size: 0.7rem;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; z-index: 100;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 900;
+        }
+        .exit-btn:hover { background: var(--danger); color: white; transform: translateX(-50%) scale(1.1); }
+        #castor-exit { bottom: 15px; }
+        
+        .game-open #castor-exit { display: none; }
 
-        /* --- MODAL DE HISTORIA --- */
-        #modal-historia {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 100;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(10px);
+        /* PANTALLA BLOQUEO */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #lock-screen.hidden { display: none; }
+        #lock-input {
+            background: transparent; border: none; border-bottom: 2px solid var(--text-color);
+            color: var(--text-color); font-family: 'Montserrat'; font-size: 2rem;
+            text-align: center; outline: none; padding: 10px; width: 300px;
+            letter-spacing: 5px; text-transform: lowercase;
         }
 
-        .modal-content {
-            max-width: 800px;
-            padding: 40px;
-            border-left: 4px solid var(--accent);
-            background: #0a0a0a;
-            position: relative;
-            max-height: 80vh; /* Ajustado para el texto */
-            
-            /* Scroll funcional pero invisible */
-            overflow-y: scroll; /* Permitir scroll vertical */
-            scrollbar-width: none; /* Ocultar en Firefox */
-            -ms-overflow-style: none;  /* Ocultar en IE/Edge */
-        }
+        /* CONTENIDO PRINCIPAL */
+        #main-content { opacity: 0; transition: opacity 0.5s; height: 100%; width: 100%; display: none; }
+        #main-content.visible { opacity: 1; display: block; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
 
-        /* Ocultar barra de scroll en Chrome, Safari y Opera */
-        .modal-content::-webkit-scrollbar {
-            display: none;
+        /* MENU HAMBURGER MEJORADO */
+        .menu-btn { 
+            position: fixed; top: 25px; left: 25px; width: 30px; height: 22px; 
+            z-index: 1001; cursor: pointer; display: flex; flex-direction: column; 
+            justify-content: space-between; 
         }
-
-        .modal-content h2 {
-            font-family: var(--font-tech);
-            color: var(--accent);
-            margin-top: 0;
-            letter-spacing: 5px;
-            text-transform: uppercase;
+        .menu-btn .bar { 
+            width: 100%; height: 3px; background-color: var(--text-color); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease; 
+            border-radius: 2px;
         }
+        /* Animación a X Roja Perfecta */
+        .menu-btn.open .bar { background-color: var(--danger); }
+        .menu-btn.open .bar:nth-child(1) { transform: translateY(9.5px) rotate(45deg); }
+        .menu-btn.open .bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .menu-btn.open .bar:nth-child(3) { transform: translateY(-9.5px) rotate(-45deg); }
+        
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--sidebar-bg); backdrop-filter: blur(20px); z-index: 1000; transition: 0.4s; padding-top: 100px; border-right: 1px solid rgba(128,128,128,0.2); }
+        .sidebar.active { left: 0; }
+        .sidebar-item { padding: 20px 40px; font-weight: 700; cursor: pointer; opacity: 0.6; text-transform: uppercase; transition: 0.2s; }
+        .sidebar-item:hover { opacity: 1; background: rgba(128,128,128,0.1); }
+        .sidebar-item.active { opacity: 1; border-left: 4px solid var(--text-color); }
 
-        .modal-content p {
-            line-height: 1.8;
-            font-size: 1rem;
-            color: #ccc;
-            text-align: justify;
+        .top-right-controls { position: fixed; top: 20px; right: 25px; display: flex; flex-direction: column; align-items: flex-end; z-index: 100; }
+        #clock { font-weight: 900; font-size: 1.8rem; }
+
+        .section { display: none; position: relative; z-index: 50; flex-direction: column; align-items: center; height: 100vh; overflow-y: auto; padding-top: 40px; scrollbar-width: none; }
+        .section.active { display: flex; }
+        
+        /* Titulo más arriba */
+        .main-title { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; text-align: center; margin-top: 10px; }
+
+        /* GRID JUEGOS más arriba y con margen inferior para no tocar el botón salir */
+        .games-container { display: grid; grid-template-columns: repeat(3, 230px); gap: 15px; padding-bottom: 120px; }
+        
+        .game-card { background: var(--card-bg); border: 1px solid rgba(128, 128, 128, 0.2); padding: 22px 10px; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .game-card:hover { border-color: var(--text-color); transform: translateY(-4px); }
+        .game-card h3 { margin: 0; font-size: 0.8rem; text-transform: uppercase; }
+
+        /* VENTANA FLOTANTE */
+        #game-window {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            width: 90%; height: 85%; background: #000; border-radius: 15px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8); z-index: 5000;
+            display: none; flex-direction: column; opacity: 0; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); overflow: hidden;
         }
+        #game-window.active { display: flex; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .game-header { width: 100%; height: 50px; background: #111; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-sizing: border-box; }
+        .fullscreen-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; text-transform: uppercase; font-weight: 900; }
+        .close-x { color: var(--danger); font-size: 1.8rem; font-weight: 900; cursor: pointer; border: none; background: none; }
+        #game-iframe { width: 100%; height: calc(100% - 50px); border: none; }
 
-        .btn-close {
-            margin-top: 30px;
-            padding: 10px 20px;
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            font-family: var(--font-tech);
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        .btn-close:hover {
-            background: var(--accent);
-            color: #000;
-        }
-
-        @media (max-width: 768px) {
-            .nav-grid { grid-template-columns: 1fr; }
-            .box { border-right: none; border-bottom: 1px solid #333; padding: 15px; }
-            .main-frame { height: auto; overflow-y: auto; }
-            h1 { margin: 40px 0; }
-            .modal-content { padding: 20px; width: 90%; }
+        @media (max-width: 850px) { 
+            .games-container { grid-template-columns: repeat(2, 1fr); } 
+            .main-title { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-frame">
-        <div class="corner top-left"></div>
-        <div class="corner top-right"></div>
-        <div class="corner bottom-left"></div>
-        <div class="corner bottom-right"></div>
-
-        <header>
-            <span>DATA_ENTRY: 2026</span>
-            <span>SB_GP_SYSTEM_V.1</span>
-        </header>
-
-        <h1>SAMBAD GP</h1>
-
-        <nav class="nav-grid">
-            <div class="box" onclick="abrirHistoria()"><span>Historia</span></div>
-            <div class="box"><span>Actualidad</span></div>
-            <div class="box"><span>Mejoras</span></div>
-            <div class="box"><span>Creador</span></div>
-            <div class="box"><span>Pilotos</span></div>
-        </nav>
+    <div id="lock-screen">
+        <p style="font-weight: 700; letter-spacing: 2px; opacity: 0.5; margin-bottom: 20px;">INTRODUCE EL CÓDIGO</p>
+        <input type="password" id="lock-input" placeholder="••••••" autofocus>
     </div>
 
-    <div id="modal-historia">
-        <div class="modal-content">
-            <h2>ORIGEN Y HERENCIA</h2>
-            <p>La historia de Sambad GP no comenzó en un circuito, sino en un pequeño taller de mecanizado de alta precisión fundado en los años 80. La familia Sambad se especializó originalmente en la fabricación de componentes críticos para la industria aeroespacial, donde el error de un micrón no es una opción. Sin embargo, la verdadera chispa surgió en 2018, cuando los hermanos Sambad decidieron aplicar su tecnología de materiales ligeros a un chasis de pruebas independiente.<br><br>
-            Lo que empezó como un proyecto de ingeniería por pura pasión, captó rápidamente la atención de los inversores tras dominar las categorías inferiores con soluciones aerodinámicas disruptivas. En 2022, la familia tomó la decisión más audaz de su historia: vender su división aeroespacial para financiar una entrada oficial en la máxima categoría. Así nació una escudería que no depende de grandes fabricantes, sino de su propio conocimiento técnico y una estructura familiar inquebrantable.<br><br>
-            Instalados ahora en su sede de vanguardia, el equipo combina la disciplina de la aviación con la agresividad del asfalto. Sambad GP no es solo un nombre en la parrilla; es el resultado de cuatro décadas de perfeccionismo técnico llevadas al límite. En cada Gran Premio, el equipo rinde homenaje a sus raíces industriales, demostrando que la ingeniería de precisión es el lenguaje universal de la velocidad. Hoy, los monoplazas con el sello Sambad desafían a los gigantes establecidos, probando que el ingenio y la herencia familiar pueden reescribir las reglas del juego.</p>
-            
-            <button class="btn-close" onclick="cerrarHistoria()">Cerrar Archivo</button>
+    <div id="game-window">
+        <div class="game-header">
+            <button class="fullscreen-btn" onclick="toggleFullscreen()">Pantalla completa</button>
+            <button class="close-x" onclick="closeGame()">✕</button>
         </div>
+        <iframe id="game-iframe" src=""></iframe>
+    </div>
+
+    <div id="main-content">
+        <canvas id="particleCanvas"></canvas>
+        <button class="exit-btn" id="castor-exit" onclick="logout()">Salir</button>
+        
+        <div class="menu-btn" id="hamburger-menu" onclick="toggleSidebar()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-item active" id="btn-games" onclick="showSection('games')">Juegos</div>
+            <div class="sidebar-item" id="btn-more" onclick="showSection('more')">Más Juegos</div>
+        </div>
+
+        <div class="top-right-controls">
+            <div id="clock">00:00:00</div>
+            <button class="theme-toggle" onclick="toggleTheme()" style="background:none; border:1px solid var(--text-color); color:var(--text-color); padding:5px 12px; cursor:pointer; border-radius:20px; font-size:0.7rem; margin-top:5px;">MODO CLARO</button>
+        </div>
+        
+        <section id="games-section" class="section active">
+            <h1 class="main-title">UBGames.88</h1>
+            <div class="games-container">
+                <div class="game-card" onclick="openGame('https://geometrylitepc.io/')"><h3>Geometry Dash</h3></div>
+                <div class="game-card" onclick="openGame('https://survival-race.io/')"><h3>Survival Race</h3></div>
+                <div class="game-card" onclick="openGame('https://spacewaves.io/')"><h3>Space Waves</h3></div>
+                <div class="game-card" onclick="openGame('https://eaglercraft.dev/')"><h3>Minecraft</h3></div>
+                <div class="game-card" onclick="openGame('https://rocketsoccerderby.gitlab.io/')"><h3>Rocket League</h3></div>
+                <div class="game-card" onclick="openGame('https://theimpostor.es/')"><h3>Impostor</h3></div>
+                <div class="game-card" onclick="openGame('https://itsvijaysingh.github.io/Snow-Rider3D/')"><h3>Snow Riding</h3></div>
+                <div class="game-card" onclick="openGame('https://pizza-edition-unblocked.github.io/all-games.html')"><h3>Pizza Edition</h3></div>
+                <div class="game-card" onclick="openGame('https://23azo.com/')"><h3>23Azo</h3></div>
+                <div class="game-card" onclick="openGame('https://23-azo.github.io/')"><h3>23-Azo GitHub</h3></div>
+                <div class="game-card" onclick="openGame('https://startgamer.net/game/31434')"><h3>My Perfect Hotel</h3></div>
+                <div class="game-card" onclick="openGame('https://1v1-lolunblocked.gitlab.io/')"><h3>1v1.LOL</h3></div>
+                <div class="game-card" onclick="openGame('https://bigsmacky3.github.io/games/flash48.html')"><h3>Core Ball</h3></div>
+                <div class="game-card" onclick="openGame('https://tinyfishingame.com/')"><h3>Tiny Fishing</h3></div>
+                <div class="game-card" onclick="openGame('https://core-ball.gitlab.io/paper.io2.html')"><h3>Paper.io 2</h3></div>
+            </div>
+        </section>
+
+        <section id="more-section" class="section">
+            <div class="games-container">
+                <div class="game-card" onclick="openGame('https://fnaf1.io/')"><h3>Five Nights at Freddy's</h3></div>
+                <div class="game-card" onclick="openGame('https://thepenaltyshooters.com/')"><h3>Penalty Shooters</h3></div>
+                <div class="game-card" onclick="openGame('https://monkeymart.co.uk/')"><h3>Monkey Mart</h3></div>
+            </div>
+        </section>
     </div>
 
     <script>
-        function abrirHistoria() {
-            document.getElementById("modal-historia").style.display = "flex";
+        const lockInput = document.getElementById('lock-input');
+        const lockScreen = document.getElementById('lock-screen');
+        const mainContent = document.getElementById('main-content');
+        const gameWindow = document.getElementById('game-window');
+        const gameIframe = document.getElementById('game-iframe');
+        const hamburger = document.getElementById('hamburger-menu');
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id + '-section').classList.add('active');
+            
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            if(id === 'games') document.getElementById('btn-games').classList.add('active');
+            if(id === 'more') document.getElementById('btn-more').classList.add('active');
+            
+            toggleSidebar();
         }
 
-        function cerrarHistoria() {
-            document.getElementById("modal-historia").style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            let modal = document.getElementById("modal-historia");
-            if (event.target == modal) {
-                modal.style.display = "none";
+        lockInput.addEventListener('input', (e) => {
+            if (e.target.value.toLowerCase() === 'castor') {
+                lockScreen.classList.add('hidden');
+                mainContent.style.display = 'block';
+                setTimeout(() => { mainContent.classList.add('visible'); initCanvas(); }, 10);
             }
+        });
+
+        function logout() {
+            mainContent.classList.remove('visible');
+            setTimeout(() => {
+                mainContent.style.display = 'none';
+                lockScreen.classList.remove('hidden');
+                lockInput.value = '';
+                lockInput.focus();
+            }, 500);
+        }
+
+        function openGame(url) {
+            gameIframe.src = url;
+            gameWindow.style.display = 'flex';
+            document.body.classList.add('game-open');
+            setTimeout(() => gameWindow.classList.add('active'), 10);
+        }
+
+        function closeGame() {
+            gameWindow.classList.remove('active');
+            document.body.classList.remove('game-open');
+            setTimeout(() => { gameWindow.style.display = 'none'; gameIframe.src = ''; }, 300);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) gameIframe.requestFullscreen().catch(() => gameWindow.requestFullscreen());
+            else document.exitFullscreen();
+        }
+
+        function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-ES', {hour12:false}); }
+        setInterval(updateClock, 1000); updateClock();
+
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            hamburger.classList.toggle('open');
+        }
+
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+
+        let particles = [];
+        let ctx = null, canv = null;
+        function initCanvas() { 
+            canv = document.getElementById('particleCanvas'); 
+            ctx = canv.getContext('2d'); 
+            canv.width = window.innerWidth; 
+            canv.height = window.innerHeight; 
+            render(); 
+        }
+        function render() {
+            if(!ctx) return;
+            ctx.clearRect(0,0,canv.width,canv.height);
+            if(Math.random()>0.9) particles.push({x:Math.random()*canv.width, y:-10, v:Math.random()*2+1});
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
+            particles.forEach((p,i) => { p.y+=p.v; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill(); if(p.y>canv.height) particles.splice(i,1); });
+            requestAnimationFrame(render);
         }
     </script>
 </body>
