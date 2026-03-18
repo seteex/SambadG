@@ -55,7 +55,6 @@
             background-color: rgba(5, 5, 5, 0.8);
         }
 
-        /* Esquinas */
         .corner { position: absolute; width: 15px; height: 15px; border: 2px solid var(--accent); z-index: 2; }
         .top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
         .top-right { top: -2px; right: -2px; border-left: none; border-bottom: none; }
@@ -117,7 +116,7 @@
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.95);
             z-index: 100;
-            display: none; /* Oculto por defecto */
+            display: none;
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(10px);
@@ -129,18 +128,25 @@
             border-left: 4px solid var(--accent);
             background: #0a0a0a;
             position: relative;
-            max-height: 90vh; /* Aumentado para acomodar la imagen */
-            overflow-y: auto;
+            max-height: 85vh;
+            /* Scroll funcional pero invisible */
+            overflow-y: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE/Edge */
         }
 
-        /* Estilo para la imagen integrada */
+        /* Ocultar barra en Chrome/Safari */
+        .modal-content::-webkit-scrollbar {
+            display: none;
+        }
+
         .history-image {
             width: 100%;
-            max-width: 100%;
             height: auto;
             border: 1px solid #333;
             margin-bottom: 30px;
             display: block;
+            filter: grayscale(0.5) contrast(1.1); /* Toque estético industrial */
         }
 
         .modal-content h2 {
@@ -175,13 +181,12 @@
             color: #000;
         }
 
-        /* Responsivo */
         @media (max-width: 768px) {
             .nav-grid { grid-template-columns: 1fr; }
             .box { border-right: none; border-bottom: 1px solid #333; padding: 15px; }
             .main-frame { height: auto; overflow-y: auto; }
             h1 { margin: 40px 0; }
-            .modal-content { padding: 20px; }
+            .modal-content { padding: 20px; width: 90%; }
         }
     </style>
 </head>
@@ -211,7 +216,7 @@
 
     <div id="modal-historia">
         <div class="modal-content">
-            <img src="https://images.unsplash.com/photo-1596753426217-09d5843b0060?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Taller Sambad & Hijos" class="history-image">
+            <img src="https://www.netixcloud.com/archivos/descargar/90f5ddaa-da07-4c48-a8d2-ab08844d7394" alt="Taller Sambad Precision" class="history-image">
 
             <h2>ORIGEN Y HERENCIA</h2>
             <p>La historia de Sambad GP no comenzó en un circuito, sino en un pequeño taller de mecanizado de alta precisión fundado en los años 80. La familia Sambad se especializó originalmente en la fabricación de componentes críticos para la industria aeroespacial, donde el error de un micrón no es una opción. Sin embargo, la verdadera chispa surgió en 2018, cuando los hermanos Sambad decidieron aplicar su tecnología de materiales ligeros a un chasis de pruebas independiente.<br><br>
@@ -231,7 +236,6 @@
             document.getElementById("modal-historia").style.display = "none";
         }
 
-        // Cerrar si se hace clic fuera del contenido
         window.onclick = function(event) {
             let modal = document.getElementById("modal-historia");
             if (event.target == modal) {
